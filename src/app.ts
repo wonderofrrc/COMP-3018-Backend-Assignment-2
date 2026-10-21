@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import morgan from "morgan";
+import healthRouter from "./api/v1/routes/healthRoutes";
 
 const app: Express = express();
 
@@ -15,5 +16,7 @@ app.use(morgan("combined"));
 app.get("/", (_req: Request, res: Response): void => {
     res.send("Hello, World!");
 });
+
+app.use("/api/v1", healthRouter);
 
 export default app;
