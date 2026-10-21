@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import morgan from "morgan";
 import healthRouter from "./api/v1/routes/healthRoutes";
+import ticketRouter from "./api/v1/routes/ticketRoutes";
 
 const app: Express = express();
 
@@ -18,5 +19,6 @@ app.get("/", (_req: Request, res: Response): void => {
 });
 
 app.use("/api/v1", healthRouter);
+app.use("/api/v1", ticketRouter);
 
 export default app;
