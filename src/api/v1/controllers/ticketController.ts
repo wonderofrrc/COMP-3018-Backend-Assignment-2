@@ -41,3 +41,54 @@ export const getTicketById = (req: Request, res: Response): void => {
         data: ticket,
     });
 };
+
+const validPriorities: Ticket["priority"][] = [
+    "critical",
+    "high",
+    "medium",
+    "low",
+];
+
+/**
+ * Creates a ticket from the request body
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns void
+ */
+export const createTicket = (req: Request, res: Response): void => {
+    const title: string = req.body.title;
+    const description: string = req.body.description;
+    const priority: Ticket["priority"] = req.body.priority;
+
+    if (!title) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message: "Missing required field: title",
+        });
+        return;
+    }
+
+    if (!description) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message: "Missing required field: description",
+        });
+        return;
+    }
+
+    if (!validPriorities.includes(priority)) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message: "Invalid priority. Must be one of: critical, high, medium, low",
+        });
+        return;
+    }
+
+    const newTicket: Ticket = ticketService.createTicket(
+        title,
+        description,
+        priority
+    );
+
+    res.status(HTTP_STATUS.CREATED).json({
+        message: "Ticket created",
+        data: newTicket,
+    });
+};
