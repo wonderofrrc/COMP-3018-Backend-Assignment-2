@@ -92,3 +92,89 @@ export const createTicket = (req: Request, res: Response): void => {
         data: newTicket,
     });
 };
+
+const validStatuses: Ticket["status"][] = ["open", "in-progress", "resolved"];
+
+/**
+ * Updates a ticket from the request body
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns void
+ */
+export const updateTicket = (req: Request, res: Response): void => {
+    const id: number = Number(req.params.id);
+    const priority: Ticket["priority"] | undefined = req.body.priority;
+    const status: Ticket["status"] | undefined = req.body.status;
+
+    if (priority !== undefined && !validPriorities.includes(priority)) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message:
+                "Invalid priority. Must be one of: critical, high, medium, low",
+        });
+        return;
+    }
+
+    if (status !== undefined && !validStatuses.includes(status)) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+            message:
+                "Invalid status. Must be one of: open, in-progress, resolved",
+        });
+        return;
+    }
+
+    const updates: Partial<
+        Pick<Ticket, "title" | "description" | "priority" | "status">
+    > = {};
+
+    if (req.body.title !== undefined) {
+        updates.title = req.body.title;
+    }
+    if (req.body.description !== undefined) {
+        updates.description = req.body.description;
+    }
+    if (priority !== undefined) {
+        updates.priority = priority;
+    }
+    if (status !== undefined) {
+        updates.status = status;
+    }
+
+    const updatedTicket: Ticket | undefined = ticketService.updateTicket(
+        id,
+        updates
+    );
+
+    if (!updatedTicket) {
+        res.status(HTTP_STATUS.NOT_FOUND).json({
+            message: "Ticket not found",
+        });
+        return;
+    }
+
+    res.status(HTTP_STATUS.OK).json({
+        message: "Ticket updated",
+        data: updatedTicket,
+    });
+};
+
+/**
+ * Deletes a ticket by id
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns void
+ */
+export const deleteTicket = (req: Request, res: Response): void => {
+    const id: number = Number(req.params.id);
+    const deleted: boolean = ticketService.deleteTicket(id);
+
+    if (!deleted) {
+        res.status(HTTP_STATUS.NOT_FOUND).json({
+            message: "Ticket not found",
+        });
+        return;
+    }
+
+    res.status(HTTP_STATUS.OK).json({
+        message: "Ticket deleted",
+    });
+};

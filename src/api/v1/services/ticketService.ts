@@ -45,3 +45,49 @@ export const createTicket = (
     tickets.push(newTicket);
     return newTicket;
 };
+
+/**
+ * Updates fields on an existing ticket
+ * @param id - Ticket id
+ * @param updates - Fields to change
+ * @returns Updated ticket or undefined if it does not exist
+ */
+export const updateTicket = (
+    id: number,
+    updates: Partial<
+        Pick<Ticket, "title" | "description" | "priority" | "status">
+    >
+): Ticket | undefined => {
+    const index: number = tickets.findIndex(
+        (ticket: Ticket) => ticket.id === id
+    );
+
+    if (index === -1) {
+        return undefined;
+    }
+
+    tickets[index] = {
+        ...tickets[index],
+        ...updates,
+    };
+
+    return tickets[index];
+};
+
+/**
+ * Removes a ticket by id
+ * @param id - Ticket id
+ * @returns True if a ticket was removed
+ */
+export const deleteTicket = (id: number): boolean => {
+    const index: number = tickets.findIndex(
+        (ticket: Ticket) => ticket.id === id
+    );
+
+    if (index === -1) {
+        return false;
+    }
+
+    tickets.splice(index, 1);
+    return true;
+};
