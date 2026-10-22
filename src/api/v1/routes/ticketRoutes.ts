@@ -5,11 +5,13 @@ import {
     createTicket,
     updateTicket,
     deleteTicket,
+    getTicketUrgency,
 } from "../controllers/ticketController";
 
 const ticketRouter: Router = express.Router();
 
 ticketRouter.get("/tickets", getAllTickets);
+ticketRouter.get("/tickets/:id/urgency", getTicketUrgency);
 ticketRouter.get("/tickets/:id", getTicketById);
 ticketRouter.post("/tickets", createTicket);
 ticketRouter.put("/tickets/:id", updateTicket);

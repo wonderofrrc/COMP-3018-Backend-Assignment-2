@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import { Ticket } from "../models/ticketModel";
 import * as ticketService from "../services/ticketService";
+import {
+    calculateTicketUrgency,
+    getTicketAgeInDays,
+    TicketUrgency,
+} from "../services/ticketUrgency";
 
 /**
  * Returns all tickets
@@ -176,5 +181,44 @@ export const deleteTicket = (req: Request, res: Response): void => {
 
     res.status(HTTP_STATUS.OK).json({
         message: "Ticket deleted",
+    });
+};
+
+/**
+ * Returns one ticket with its urgency score and message
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns void
+ */
+export const getTicketUrgency = (req: Request, res: Response): void => {
+    const id: number = Number(req.params.id);
+    const ticket: Ticket | undefined = ticketService.getTicketById(id);
+
+    if (!ticket) {
+        res.status(HTTP_STATUS.NOT_FOUND).json({
+            message: "Ticket not found",
+        });
+        return;
+    }
+
+    const ticketAge: number = getTicketAgeInDays(ticket.createdAt);
+    const urgency: TicketUrgency = calculateTicketUrgency(
+        ticket.priority,
+        ticket.status,
+        ticketAge
+    );
+
+    res.status(HTTP_STATUS.OK).json({
+        message: "Ticket urgency calculated",
+        data: {
+            id: ticket.id,
+            title: ticket.title,
+            priority: ticket.priority,
+            status: ticket.status,
+            createdAt: ticket.createdAt,
+            ticketAge: urgency.ticketAge,
+            urgencyScore: urgency.urgencyScore,
+            urgencyLevel: urgency.urgencyLevel,
+        },
     });
 };
