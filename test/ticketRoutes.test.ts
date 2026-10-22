@@ -36,7 +36,11 @@ describe("Ticket routes", (): void => {
     describe("POST /api/v1/tickets", (): void => {
         it("should create a ticket", async (): Promise<void> => {
             // Arrange
-            const newTicket = {
+            const newTicket: {
+                title: string;
+                description: string;
+                priority: string;
+            } = {
                 title: "Printer jam",
                 description: "Third floor printer is jammed",
                 priority: "low",
@@ -56,7 +60,10 @@ describe("Ticket routes", (): void => {
 
         it("should return 400 when title is missing", async (): Promise<void> => {
             // Arrange
-            const newTicket = {
+            const newTicket: {
+                description: string;
+                priority: string;
+            } = {
                 description: "No title on purpose",
                 priority: "low",
             };
@@ -75,7 +82,9 @@ describe("Ticket routes", (): void => {
     describe("PUT /api/v1/tickets/:id", (): void => {
         it("should return 400 when status is invalid", async (): Promise<void> => {
             // Arrange
-            const updates = {
+            const updates: {
+                status: string;
+            } = {
                 status: "closed",
             };
 
