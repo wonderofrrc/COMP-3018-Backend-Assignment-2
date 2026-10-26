@@ -23,7 +23,6 @@ const baseScores: Record<Ticket["priority"], number> = {
     low: 10,
 };
 
-// First matching threshold wins, same pattern as the portfolio summary
 const urgencyThresholds: UrgencyThreshold[] = [
     {
         matches: (urgencyScore: number): boolean => urgencyScore > 75,
@@ -65,7 +64,6 @@ export const calculateTicketUrgency = (
     status: Ticket["status"],
     ticketAge: number
 ): TicketUrgency => {
-    // A resolved ticket is not waiting on anyone
     if (status === "resolved") {
         return {
             ticketAge,

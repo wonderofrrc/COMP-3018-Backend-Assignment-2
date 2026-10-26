@@ -2,7 +2,7 @@ import { Ticket } from "../api/v1/models/ticketModel";
 
 const MS_PER_DAY: number = 24 * 60 * 60 * 1000;
 
-// Ages stay aligned with the video no matter which day the server runs
+// Offsets are from today so the ages stay the same
 const daysAgo = (days: number): string => {
     return new Date(Date.now() - days * MS_PER_DAY).toISOString();
 };
